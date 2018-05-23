@@ -6,12 +6,16 @@
  * Time: 19:01
  */
 
+
+/**
+ * Class Bankbook 現在入っている金額を出し入れするクラス
+ */
 class Bankbook
 {
     /**
      * @var integer $currentAmount 入っている金額
      */
-    private $currentAmount = null;
+    private $currentAmount = 0;
 
     /**
      * @return integer
