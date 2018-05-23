@@ -6,12 +6,15 @@
  * Time: 19:00
  */
 
+/**
+ * Class Sales 売上金額を出し入れするクラス
+ */
 class Sales
 {
     /**
      * @var integer $currentSales 売り上げ金額
      */
-    private $currentSales = null;
+    private $currentSales = 0;
 
     /**
      * @return integer
