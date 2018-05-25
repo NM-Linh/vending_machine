@@ -46,7 +46,8 @@ class VendingMachine
 }
 
 /*
-<?php
+//コーラ購入処理
+
 //商品情報
 $Drink = array(
     'name' => 'cola',
@@ -72,9 +73,11 @@ while (1) {
         echo "商品がありません。もう一度入力してください。" . PHP_EOL;
     }
 }
-?>
+*/
 
-<?php
+/*
+//お金投入処理
+
 //商品情報
 $Drink = array(
     'name' => 'cola',
@@ -109,4 +112,4 @@ while (1) {
 
 echo '最終金額は' . $sum . 'です！';
 
-?>
+*/
