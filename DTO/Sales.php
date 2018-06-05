@@ -31,4 +31,13 @@ class Sales
     {
         $this->currentSales = $currentSales;
     }
+
+    /**
+     * テストために追加
+     * @return array
+     */
+    public function getAllAttributes()
+    {
+        return get_object_vars($this);
+    }
 }
