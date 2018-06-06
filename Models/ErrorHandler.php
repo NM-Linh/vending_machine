@@ -15,6 +15,7 @@ class ErrorHandler
 
     private $menu = array('入金', '購入', '払い戻し', '払戻し', '払戻', '売り上げ確認', '売上げ確認', '売上確認', '終了');
 
+    private $authorizedMoney = array('10', '50', '100', '500', '1000');
 
     public function inputMenuError($inputValue)
     {
@@ -44,6 +45,24 @@ class ErrorHandler
             }
         }
         return $boolean;
+    }
+
+    public function inputMoneyError($inputValue)
+    {
+        $inputValue = mb_convert_kana($inputValue, 'rnas', 'UTF-8');
+        if ($this->inputNumberError($inputValue)) {
+            return false;
+        }
+        $boolean = false;
+        foreach ($this->authorizedMoney as $value) {
+            if ($value !== $inputValue) {
+                $boolean = true;
+            }
+        }
+        if ($boolean) {
+            return false;
+        }
+        return $inputValue;
     }
 
     /**
