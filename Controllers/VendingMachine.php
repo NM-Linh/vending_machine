@@ -138,6 +138,7 @@ class VendingMachine
                     case self::MODE_STOCKS_EXIST:
                     case self::MODE_CURRENT_AMOUNT_NOT_ZERO_STOCKS_NOT_EXIST:
                         $this->payBack();
+                        $this->resetBankbook();
                         $this->selectMenu();
                         break;
 
@@ -168,8 +169,11 @@ class VendingMachine
 
     public function insertMoney()
     {
-//        $this->moneyHandler->function();
-        $this->view('まだできてない！');
+        $insertMoney = readline("お金を入れてください（'10', '50', '100', '500', '1000'のみ使えます）\n");
+        $getAmount = $this->bankbook->getCurrentAmount();
+        $currentMoney = $this->moneyHandler->calculation($insertMoney,$getAmount);
+        $this->bankbook->setCurrentAmount($currentMoney);
+
     }
 
     public function purchaseItem()
@@ -201,8 +205,13 @@ class VendingMachine
 
     public function payBack()
     {
-//        $this->moneyHandler->function();
-        $this->view('まだできてない！');
+        $this->view("\nおつりは".$this->bankbook->getCurrentAmount()."です\n");
+        return $this->bankbook->getCurrentAmount();
+    }
+
+    public function resetBankbook()
+    {
+        $this->bankbook->setCurrentAmount(0);
     }
 
     public function checkSales()
