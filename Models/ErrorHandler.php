@@ -26,7 +26,7 @@ class ErrorHandler
                 }
             }
         } else {
-            if (!$this->inputNumberError((int)$inputValue) && (int)$inputValue !== 0) {
+            if ((int)$inputValue !== 0 && !$this->inputNumberError((int)$inputValue)) {
                 return $inputValue;
             }
         }
@@ -38,7 +38,7 @@ class ErrorHandler
         $boolean = true;
         for ($i = 0; $i < strlen($inputValue); $i++) {
             for ($j = 0; $j < count($this->number); $j++) {
-                if ($this->number[$j] === substr($inputValue, $i, 1)) {
+                if ($this->number[$j] !== substr($inputValue, $i, 1)) {
                     $boolean = false;
                 }
             }
@@ -65,7 +65,7 @@ class ErrorHandler
         } elseif ($name === '0') {
             return $name;
         } else {
-            if(count($items)>=(int)$name) {
+            if (count($items) >= (int)$name) {
                 for ($i = 0; $i < (int)$name; $i++) {
                     list($key, $val) = each($items);
                 }
