@@ -32,4 +32,13 @@ class Bankbook
     {
         $this->currentAmount = $currentAmount;
     }
+
+    /**
+     * テストために追加
+     * @return array
+     */
+    public function getAllAttributes()
+    {
+        return get_object_vars($this);
+    }
 }
