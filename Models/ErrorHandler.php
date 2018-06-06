@@ -15,6 +15,7 @@ class ErrorHandler
 
     private $menu = array('入金', '購入', '払い戻し', '払戻し', '払戻', '売り上げ確認', '売上げ確認', '売上確認', '終了');
 
+    private $authorizedMoney = array('10', '50', '100', '500', '1000');
 
     public function inputMenuError($inputValue)
     {
@@ -26,7 +27,7 @@ class ErrorHandler
                 }
             }
         } else {
-            if ($this->inputNumberError((int)$inputValue) && (int)$inputValue !== 0) {
+            if ((int)$inputValue !== 0 && !$this->inputNumberError((int)$inputValue)) {
                 return $inputValue;
             }
         }
@@ -35,15 +36,33 @@ class ErrorHandler
 
     public function inputNumberError($inputValue)
     {
-        $boolean = false;
+        $boolean = true;
         for ($i = 0; $i < strlen($inputValue); $i++) {
             for ($j = 0; $j < count($this->number); $j++) {
                 if ($this->number[$j] !== substr($inputValue, $i, 1)) {
-                    $boolean = true;
+                    $boolean = false;
                 }
             }
         }
         return $boolean;
+    }
+
+    public function inputMoneyError($inputValue)
+    {
+        $inputValue = mb_convert_kana($inputValue, 'rnas', 'UTF-8');
+        if ($this->inputNumberError($inputValue)) {
+            return false;
+        }
+        $boolean = false;
+        foreach ($this->authorizedMoney as $value) {
+            if ($value !== $inputValue) {
+                $boolean = true;
+            }
+        }
+        if ($boolean) {
+            return false;
+        }
+        return $inputValue;
     }
 
     /**
@@ -52,18 +71,24 @@ class ErrorHandler
      * @return bool
      * 入力してもらった商品の名前が正しいか正しくないかを判別
      */
-    public function inputNameError($items, $name)
+    public function inputItemNameError($items, $name)
     {
         $name = mb_convert_kana($name, 'rnas', 'UTF-8');
-        if(strlen($name)>1) {
-            foreach ($items->getItems() as $value) {
+        $items = $items->getItems();
+        if ($this->inputNumberError($name)) {
+            foreach ($items as $value) {
                 if ($name === $value['name']) {
                     return $name;
                 }
             }
-        }else{
-            if ($this->inputNumberError((int)$name)) {
-                return $name;
+        } elseif ($name === '0') {
+            return $name;
+        } else {
+            if (count($items) >= (int)$name) {
+                for ($i = 0; $i < (int)$name; $i++) {
+                    list($key, $val) = each($items);
+                }
+                return $key;
             }
         }
         return false;

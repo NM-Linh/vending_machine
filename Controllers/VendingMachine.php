@@ -25,14 +25,18 @@ class VendingMachine
     const CHECK_SALES = 4;
     const QUIT_PROCESS = 5;
 
+    const RESULT_CODE_PURCHASE_SUCCESS = 1;
+    const RESULT_CODE_NOT_SUFFICIENT_MONEY = 2;
+    const RESULT_CODE_NOT_STOCKS = 3;
+    const RESULT_CODE_NOT_EXIST_ITEM = 4;
+    const RESULT_CODE_EXIT_PURCHASE_PROCESS = 5;
+
     private $items;
     private $sales;
     private $bankbook;
     private $buy;
     private $errorHandler;
     private $moneyHandler;
-
-    private $authorizedMoney = array('10', '50', '100', '500', '1000');
 
     public function __construct()
     {
@@ -173,26 +177,33 @@ class VendingMachine
         $getAmount = $this->bankbook->getCurrentAmount();
         $currentMoney = $this->moneyHandler->calculation($insertMoney,$getAmount);
         $this->bankbook->setCurrentAmount($currentMoney);
-
     }
 
     public function purchaseItem()
     {
-        $this->listUpMenu();
         do {
-            if ($this->bankbook->getCurrentAmount() > 0) {
-                $itemName = readline("どんな商品を買いますか？(戻りたければ'0'を入力してください)\n");
-                $itemName = $this->errorHandler->inputNameError($this->items, $itemName);
-                printf($itemName);
-                if ($itemName && $itemName !== 0) {
-                    $this->buy->buyItems($itemName);
-                }elseif($itemName == 0){
-                    $itemName = 0;
-                } else {
+            $this->listUpMenu();
+            $itemName = readline("どんな商品を買いますか？(戻りたければ'0'を入力してください)\n");
+            switch ($this->buy->buyItems($itemName)){
+                case self::RESULT_CODE_PURCHASE_SUCCESS:
+                    $this->view('商品を買いました！');
+                    break;
+
+                case self::RESULT_CODE_NOT_SUFFICIENT_MONEY:
+                    $this->view("\n残高が足りないです！\n");
+                    break;
+
+                case self::RESULT_CODE_NOT_STOCKS:
+                    $this->view("\nその商品は売切れです！\n");
+                    break;
+
+                case self::RESULT_CODE_NOT_EXIST_ITEM:
                     $this->view("\n商品名を正しく入力してください！\n");
-                }
-            }else{
-                $itemName = 0;
+                    break;
+
+                case self::RESULT_CODE_EXIT_PURCHASE_PROCESS:
+                    $itemName = 0;
+                    break;
             }
         } while ($itemName !== 0);
     }
