@@ -11,12 +11,25 @@
  */
 class ErrorHandler
 {
+    /**
+     * @var array
+     */
     private $number = array('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
 
+    /**
+     * @var array
+     */
     private $menu = array('入金', '購入', '払い戻し', '払戻し', '払戻', '売り上げ確認', '売上げ確認', '売上確認', '終了');
 
+    /**
+     * @var array
+     */
     private $authorizedMoney = array('10', '50', '100', '500', '1000');
 
+    /**
+     * @param $inputValue
+     * @return bool|string
+     */
     public function inputMenuError($inputValue)
     {
         $inputValue = mb_convert_kana($inputValue, 'rnas', 'UTF-8');
@@ -27,39 +40,47 @@ class ErrorHandler
                 }
             }
         } else {
-            if ((int)$inputValue !== 0 && !$this->inputNumberError((int)$inputValue)) {
+            if ((int)$inputValue !== 0 && $this->inputNumberError((int)$inputValue)) {
                 return $inputValue;
             }
         }
         return false;
     }
 
+    /**
+     * @param $inputValue
+     * @return bool
+     */
     public function inputNumberError($inputValue)
     {
-        $boolean = true;
+        $boolean = false;
         for ($i = 0; $i < strlen($inputValue); $i++) {
             for ($j = 0; $j < count($this->number); $j++) {
                 if ($this->number[$j] !== substr($inputValue, $i, 1)) {
-                    $boolean = false;
+                    $boolean = true;
                 }
             }
         }
         return $boolean;
     }
 
+    /**
+     * @param $inputValue
+     * @return bool|string
+     */
     public function inputMoneyError($inputValue)
     {
         $inputValue = mb_convert_kana($inputValue, 'rnas', 'UTF-8');
-        if ($this->inputNumberError($inputValue)) {
+        if (!$this->inputNumberError($inputValue)) {
             return false;
         }
         $boolean = false;
         foreach ($this->authorizedMoney as $value) {
-            if ($value !== $inputValue) {
+            if ($value === $inputValue) {
                 $boolean = true;
             }
         }
-        if ($boolean) {
+        if (!$boolean) {
             return false;
         }
         return $inputValue;
@@ -75,7 +96,7 @@ class ErrorHandler
     {
         $name = mb_convert_kana($name, 'rnas', 'UTF-8');
         $items = $items->getItems();
-        if ($this->inputNumberError($name)) {
+        if (!$this->inputNumberError($name)) {
             foreach ($items as $value) {
                 if ($name === $value['name']) {
                     return $name;

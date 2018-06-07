@@ -12,16 +12,40 @@
  */
 class MoneyHandler
 {
-    private $authorizedMoney = array('10', '50', '100', '500', '1000');
+    /**
+     * @var object $bankbook ControllerからもらったBankbookクラスのobjectの情報が入っている変数
+     */
+    private $bankbook;
 
+    /**
+     * @var object $errorHandler ControllerからもらったErrorHandlerクラスのobjectの情報が入っている変数
+     */
+    private $errorHandler;
 
-    public function validateMoney($checkMoney)
+    /**
+     * MoneyHandler constructor.
+     * @param $bankbook
+     * @param $errorHandler
+     */
+    public function __construct($bankbook, $errorHandler)
     {
+        $this->bankbook = $bankbook;
+        $this->errorHandler = $errorHandler;
+    }
 
-        if (in_array($checkMoney, $this->authorizedMoney)) {
-            return true;
+    /**
+     * @param $money
+     * @return mixed
+     */
+    public function inputMoney($money)
+    {
+        $money = $this->errorHandler->inputMoneyError($money);
+        if ($money) {
+            $getAmount = $this->bankbook->getCurrentAmount();
+            $currentMoney = $this->calculation($money, $getAmount);
+            $this->bankbook->setCurrentAmount($currentMoney);
         }
-        return false;
+        return $money;
     }
 
     /**
