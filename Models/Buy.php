@@ -6,37 +6,40 @@
  * Time: 19:33
  */
 
+
+
 /**
  * Class Buy
- * 名前：空白、名前がないとき
- * 入れるお金：文字、空白、
+ *
  */
 class Buy
 {
-    const RESULT_CODE_PURCHASE_SUCCESS = 1;
-    const RESULT_CODE_NOT_SUFFICIENT_MONEY = 2;
-    const RESULT_CODE_NOT_STOCKS = 3;
-    const RESULT_CODE_NOT_EXIST_ITEM = 4;
-    const RESULT_CODE_EXIT_PURCHASE_PROCESS = 5;
     /**
      * @var object $items ControllerからもらったItemsクラスのobjectの情報が入っている変数
      */
     private $items;
+
     /**
      * @var object $sales ControllerからもらったSalesクラスのobjectの情報が入っている変数
      */
     private $sales;
+
     /**
      * @var object $bankbook ControllerからもらったBankbookクラスのobjectの情報が入っている変数
      */
     private $bankbook;
+
+    /**
+     * @var object $errorHandler
+     */
     private $errorHandler;
 
     /**
      * Buy constructor.
-     * @param $items object from controller
-     * @param $sales object from controller
-     * @param $bankbook object from controller
+     * @param $items object from controller which is Class Items
+     * @param $sales object from controller which is Class Sales
+     * @param $bankbook object from controller which is Class Bankbook
+     * @param $errorHandler object from controller which is Class ErrorHandler
      * Controllerから作ってもらったobjectを参照する
      */
     public function __construct($items, $sales, $bankbook, $errorHandler)
@@ -56,25 +59,28 @@ class Buy
         $itemName = $this->errorHandler->inputItemNameError($this->items, $name);
 
         if ($itemName === '0') {
-            return self::RESULT_CODE_EXIT_PURCHASE_PROCESS;
+            return Datas::RESULT_CODE_PURCHASE_SUCCESS;
         }
 
         if ($itemName === false) {
-            return self::RESULT_CODE_NOT_EXIST_ITEM;
+            return Datas::RESULT_CODE_NOT_EXIST_ITEM;
         }
 
         if ($this->items->getItemsStocks($itemName) <= 0) {
-            return self::RESULT_CODE_NOT_STOCKS;
+            return Datas::RESULT_CODE_NOT_STOCKS;
         }
 
         if (($this->bankbook->getCurrentAmount()) - ($this->items->getItemsPrice($itemName)) < 0) {
-            return self::RESULT_CODE_NOT_SUFFICIENT_MONEY;
+            return Datas::RESULT_CODE_NOT_SUFFICIENT_MONEY;
         }
 
         $this->purchaseProcess($itemName);
-        return self::RESULT_CODE_PURCHASE_SUCCESS;
+        return Datas::RESULT_CODE_PURCHASE_SUCCESS;
     }
 
+    /**
+     * @param $name
+     */
     public function purchaseProcess($name)
     {
         $getItemsPrice = $this->items->getItemsPrice($name);
