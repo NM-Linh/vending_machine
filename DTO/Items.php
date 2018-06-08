@@ -11,6 +11,9 @@
  */
 class Items
 {
+    /** 最大在庫 */
+    const limit = 5;
+
     /**
      * @var array $items 販売の商品が入ってる
      */
@@ -18,7 +21,7 @@ class Items
         'コーラ' => array(
             'name' => 'コーラ',
             'price' => 120,
-            'stocks' => 5
+            'stocks' => self::limit
         )
     );
 
