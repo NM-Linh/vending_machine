@@ -115,7 +115,9 @@ class VendingMachine
         switch ($menu) {
             case '入金':
             case self::INPUT_MONEY:
-                $this->insertMoney();
+                if (!$this->insertMoney()) {
+                    $this->view("\n正しいお金を入れてください!\n");
+                }
                 $this->selectMenu();
                 break;
 
@@ -175,8 +177,13 @@ class VendingMachine
     {
         $insertMoney = readline("お金を入れてください（'10', '50', '100', '500', '1000'のみ使えます）\n");
         $getAmount = $this->bankbook->getCurrentAmount();
-        $currentMoney = $this->moneyHandler->calculation($insertMoney,$getAmount);
-        $this->bankbook->setCurrentAmount($currentMoney);
+        if ($this->moneyHandler->validateMoney($insertMoney)) {
+            $currentMoney = $this->moneyHandler->calculation($insertMoney, $getAmount);
+            $this->bankbook->setCurrentAmount($currentMoney);
+            $this->view("\n ". $insertMoney. "円を投入した!\n");
+            return true;
+        }
+        return false;
     }
 
     public function purchaseItem()
